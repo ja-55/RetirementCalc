@@ -9,10 +9,10 @@ import pandas as pd
 import numpy as np
 
 # Custom Functions
-import RetPlan_Exp
-import RetPlan_Inv
-import RetPlan_Rev
-import RetPlan_Bal
+import RetPlan_Expenses
+import RetPlan_Investments
+import RetPlan_Revenue
+import RetPlan_Balances
 import RetPlan_Viz
 
 
@@ -94,18 +94,18 @@ simdict_bal = dict()
 for sim in range(sims):
     
     # Expenses
-    fcst_exp = RetPlan_Exp.gen_fcst_exp(data_exp, data_oth,
+    fcst_exp = RetPlan_Expenses.gen_fcst_exp(data_exp, data_oth,
                                         dt_stt, dt_rtr, dt_rng)
     
     # Investments
-    fcst_inv_brk = RetPlan_Inv.gen_inv_df(dt_rng, dt_stt, dt_wd_brk, dt_rtr,
+    fcst_inv_brk = RetPlan_Investments.gen_inv_df(dt_rng, dt_stt, dt_wd_brk, dt_rtr,
                     funds_rowdesc, 
                     bb_brk, wd_brk, 
                     fcst_exp.loc[:,'EXP_BRK'],srs_rtn_brk, 
                     0, 0,
                     data_inv.loc['BRK','Decay'], data_exp.loc['EXP_BRK','Inflation'])
     
-    fcst_inv_ira = RetPlan_Inv.gen_inv_df(dt_rng, dt_stt, dt_wd_ira, dt_rtr,
+    fcst_inv_ira = RetPlan_Investments.gen_inv_df(dt_rng, dt_stt, dt_wd_ira, dt_rtr,
                     funds_rowdesc, 
                     bb_ira, wd_ira, 
                     fcst_exp.loc[:,'EXP_IRA'],srs_rtn_ira, 
@@ -113,7 +113,7 @@ for sim in range(sims):
                     data_inv.loc['IRA','Decay'], data_exp.loc['EXP_IRA','Inflation'])
     
     fok_match = data_rev.loc['REV_SAL','Amount'] * data_oth.loc['FOK_Match','Amount']
-    fcst_inv_fok = RetPlan_Inv.gen_inv_df(dt_rng, dt_stt, dt_wd_fok, dt_rtr,
+    fcst_inv_fok = RetPlan_Investments.gen_inv_df(dt_rng, dt_stt, dt_wd_fok, dt_rtr,
                     funds_rowdesc, 
                     bb_fok, wd_fok, 
                     fcst_exp.loc[:,'EXP_FOK'],srs_rtn_ira, 
@@ -121,7 +121,7 @@ for sim in range(sims):
                     data_inv.loc['IRA','Decay'], data_exp.loc['EXP_FOK','Inflation'])
     
     srs_exp_res = pd.Series(0, index = dt_rng)
-    fcst_inv_res = RetPlan_Inv.gen_inv_df(dt_rng, dt_stt, dt_wd_res, dt_rtr,
+    fcst_inv_res = RetPlan_Investments.gen_inv_df(dt_rng, dt_stt, dt_wd_res, dt_rtr,
                     funds_rowdesc, 
                     bb_res, 0, 
                     srs_exp_res, srs_rtn_res, 
@@ -129,7 +129,7 @@ for sim in range(sims):
                     data_inv.loc['RES','Decay'], 0)
     
     # Revenue    
-    fcst_rev = RetPlan_Rev.gen_fcst_rev(dt_rng, dt_stt, dt_rtr, dt_ssi,
+    fcst_rev = RetPlan_Revenue.gen_fcst_rev(dt_rng, dt_stt, dt_rtr, dt_ssi,
                      data_rev.index,
                      data_rev.loc['REV_SAL','Amount'], data_rev.loc['REV_GIF','Amount'],
                      data_rev.loc['REV_OTH','Amount'], data_rev.loc['REV_SSI','Amount'],
@@ -138,7 +138,7 @@ for sim in range(sims):
                      data_oth.loc['Tax_Salary','Amount'])
     
     # Balances    
-    fcst_bal = RetPlan_Bal.gen_fcst_bal(dt_rng, dt_stt,
+    fcst_bal = RetPlan_Balances.gen_fcst_bal(dt_rng, dt_stt,
                      funds_rowdesc,
                      data_oth,
                      fcst_rev, fcst_exp)
