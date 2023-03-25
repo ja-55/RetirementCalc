@@ -19,3 +19,10 @@ The calculator is set up to generate projections for a single brokerage account,
 * Withdrawal: Initial amount of withdrawal from the specified investment fund
 
 ## Input Sheet Detail - Expenses
+* Enter the annual cost of each category in column B, except for 401K investments. This will be calculated based on current salary information provided elsewhere in the calculator
+* The monthly cost of each category will automatically populate in column C
+* For any categories where you expect spending behavior to substantially change upon retirement, you can enter an updated expectation for an annual spend in column D. If spending behavior is not expected to substantially change, leave column D blank. Note that the amount inputted in this column will be the annual spend the calculator uses for the first year of retirement.
+* For any categories where column D is populated, a monthly cost will be automatically calculated in column E. If column D is not populated, column E will be blank.
+* In column F, enter your expectation for year-over-year cost inflation within the category. Note that this is calculated elsewhere within the calculator for all investments (IRA, FOK, Brokerage)
+* In column G, you can enter a standard deviation for your inflation rate, with more volatile categories having a higher standard deviation. If you would prefer to use a constant inflation rate, set column G to zero for all categories.
+
