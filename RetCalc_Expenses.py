@@ -28,30 +28,28 @@ def gen_fcst_exp(data_exp, data_oth,
     # Timeline - Start ---> Start + 1Yr
     for idx, row in df_mth_sav_exp.loc[dt_stt:dt.date(dt_stt.year,12,1),:].iterrows():
         for cat in data_exp.index:
-            df_mth_sav_exp.loc[idx, cat] = data_exp.loc[cat, 'Amt_Init_Mth']
+            df_mth_sav_exp.loc[idx, cat] = data_exp.loc[cat, 'Amt_Init_Ann'] / 12
             
     # Timeline - Start + 1Yr ---> Retire (Adds YoY inflation)
-    for idx, row in df_mth_sav_exp.loc[dt.date(dt_stt.year + 1,1,1):dt_rtr,:].iterrows():
+    for idx, row in df_mth_sav_exp.loc[dt.date(dt_stt.year + 1,1,1):dt.date(dt_rtr.year - 1,12,1),:].iterrows():
         for cat in data_exp.index:
-            df_mth_sav_exp.loc[idx, cat] = df_mth_sav_exp.shift(12).loc[idx,cat] * (
-                1 + np.random.choice(dict_exp_infl[cat], 1, replace = False)[0])
+            df_mth_sav_exp.loc[idx, cat] = df_mth_sav_exp.shift(12).loc[idx,cat] * (1 + np.random.choice(dict_exp_infl[cat], 1, replace = False)[0])
 
-    # Timeline - Retire ---> Retire + 1Yr (Resets home, giving, medical, travel and zeros investments)
-    for idx, row in df_mth_sav_exp.loc[dt_rtr:dt.date(dt_rtr.year + 1,12,1),:].iterrows():
+    # Timeline - Retire ---> Retire + 1Yr (Resets giving and travel and zeros investments)
+    for idx, row in df_mth_sav_exp.loc[dt_rtr:dt.date(dt_rtr.year,12,1),:].iterrows():
         for cat in data_exp.index:
             if cat in ['EXP_BRK','EXP_IRA','EXP_FOK']:
                 df_mth_sav_exp.loc[idx, cat] = 0
-            elif cat in ['EXP_HOM','EXP_GIV','EXP_MED','EXP_TRV']:
+            elif cat in ['EXP_GIV','EXP_TRV']:
                 df_mth_sav_exp.loc[idx, cat] = data_exp.loc[cat, 'Amt_Rtr_Mth']
             else:
                 df_mth_sav_exp.loc[idx, cat] = df_mth_sav_exp.shift(12).loc[idx,cat] * (
                     1 + np.random.choice(dict_exp_infl[cat], 1, replace = False)[0])
 
-    # Timeline - Retire + 1Yr ---> End (Adds YoY inflation)
-    for idx, row in df_mth_sav_exp.loc[dt.date(dt_rtr.year + 1,12,1):,:].iterrows():
+    # Timeline - Retire + 1Yr ---> End (Resets home and adds YoY inflation)
+    for idx, row in df_mth_sav_exp.loc[dt.date(dt_rtr.year + 1,1,1):,:].iterrows():
         for cat in data_exp.index:
-            df_mth_sav_exp.loc[idx, cat] = df_mth_sav_exp.shift(12).loc[idx,cat] * (
-                1 + np.random.choice(dict_exp_infl[cat], 1, replace = False)[0])
+            df_mth_sav_exp.loc[idx, cat] = df_mth_sav_exp.shift(12).loc[idx,cat] * (1 + np.random.choice(dict_exp_infl[cat], 1, replace = False)[0])
 
     # Create total line
     df_mth_sav_exp.loc[:,'EXP_TOT'] = df_mth_sav_exp.T.sum().T
